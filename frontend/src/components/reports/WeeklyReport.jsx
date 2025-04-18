@@ -1,4 +1,3 @@
-// src/components/reports/WeeklyReport.jsx
 import React, { useState, useEffect } from 'react';
 import { attendanceService } from '../../services/attendanceService';
 import { formatDisplayDate, formatDate, getWeekDates } from '../../utils/dateUtils';
@@ -66,13 +65,143 @@ const WeeklyReport = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Weekly Attendance Report</h2>
-      
-      <form onSubmit={handleSubmit} className="mb-6">
-        <div className="flex items-end gap-4">
-          <div className="flex-1">
-            <label htmlFor="reportDate" className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="weekly-report">
+      <style>
+        {`
+          .weekly-report {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+          .weekly-report h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+          }
+          .weekly-report form {
+            margin-bottom: 1.5rem;
+          }
+          .weekly-report .form-group {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+          }
+          .weekly-report .form-group .input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+          }
+          .weekly-report .form-group .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+          }
+          .weekly-report .btn-submit {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+          }
+          .weekly-report .btn-submit:hover {
+            background-color: #2563eb;
+          }
+          .weekly-report .btn-export {
+            background-color: #10b981;
+            color: white;
+            border: none;
+          }
+          .weekly-report .btn-export:hover {
+            background-color: #047857;
+          }
+          .weekly-report .loading {
+            text-align: center;
+            padding: 1rem;
+          }
+          .weekly-report .error {
+            background-color: #fecaca;
+            color: #b91c1c;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+          }
+          .weekly-report .summary-section {
+            background-color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+          }
+          .weekly-report .summary-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+          }
+          .weekly-report .summary-section .summary-item {
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 1rem;
+          }
+          .weekly-report .summary-section .summary-item .label {
+            font-size: 0.875rem;
+            color: #6b7280;
+          }
+          .weekly-report .summary-section .summary-item .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+          }
+          .weekly-report .attendance-table {
+            min-width: 100%;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+          }
+          .weekly-report .attendance-table th, .weekly-report .attendance-table td {
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+          }
+          .weekly-report .attendance-table th {
+            background-color: #f3f4f6;
+          }
+          .weekly-report .attendance-table tr:hover {
+            background-color: #f9fafb;
+          }
+          .weekly-report .status-pill {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            text-transform: capitalize;
+          }
+          .weekly-report .status-pill.present {
+            background-color: #d1fae5;
+            color: #15803d;
+          }
+          .weekly-report .status-pill.absent {
+            background-color: #fee2e2;
+            color: #b91c1c;
+          }
+          .weekly-report .status-pill.leave {
+            background-color: #bfdbfe;
+            color: #1e3a8a;
+          }
+          .weekly-report .status-pill.halfday {
+            background-color: #fef08a;
+            color: #9c5e1f;
+          }
+        `}
+      </style>
+
+      <h2>Weekly Attendance Report</h2>
+
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <div className="input">
+            <label htmlFor="reportDate" className="text-sm font-medium text-gray-700 mb-1">
               Select Any Date in the Week
             </label>
             <input
@@ -83,15 +212,12 @@ const WeeklyReport = () => {
               onChange={handleDateChange}
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
+          <button type="submit" className="btn btn-submit">
             Generate Report
           </button>
           <button
             type="button"
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            className="btn btn-export"
             onClick={handleExport}
           >
             Export to Excel
@@ -99,40 +225,38 @@ const WeeklyReport = () => {
         </div>
       </form>
 
-      {loading && <div className="text-center py-4">Loading report...</div>}
-      
+      {loading && <div className="loading">Loading report...</div>}
+
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4">
+        <div className="error">
           {error}
         </div>
       )}
 
       {report && !loading && (
         <div>
-          <div className="bg-gray-100 p-4 rounded-md mb-6">
-            <h3 className="text-lg font-semibold mb-2">
-              Weekly Summary ({formatDisplayDate(report.summary.startDate)} - {formatDisplayDate(report.summary.endDate)})
-            </h3>
+          <div className="summary-section">
+            <h3>Weekly Summary ({formatDisplayDate(report.summary.startDate)} - {formatDisplayDate(report.summary.endDate)})</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-              <div className="bg-white p-3 rounded shadow-sm">
-                <div className="text-sm text-gray-500">Total Staff</div>
-                <div className="text-2xl font-bold">{report.summary.totalStaff}</div>
+              <div className="summary-item">
+                <div className="label">Total Staff</div>
+                <div className="value">{report.summary.totalStaff}</div>
               </div>
-              <div className="bg-white p-3 rounded shadow-sm">
-                <div className="text-sm text-gray-500">Working Days</div>
-                <div className="text-2xl font-bold">{report.summary.totalDays}</div>
+              <div className="summary-item">
+                <div className="label">Working Days</div>
+                <div className="value">{report.summary.totalDays}</div>
               </div>
             </div>
-            
+
             <h4 className="font-medium mb-2">Daily Attendance</h4>
             <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200">
+              <table className="attendance-table">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="py-2 px-4 border-b text-left">Date</th>
-                    <th className="py-2 px-4 border-b text-left">Present</th>
-                    <th className="py-2 px-4 border-b text-left">Absent</th>
-                    <th className="py-2 px-4 border-b text-left">Attendance %</th>
+                  <tr>
+                    <th>Date</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Attendance %</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,13 +265,13 @@ const WeeklyReport = () => {
                     const absentCount = report.summary.dailyAbsent[day] || 0;
                     const total = presentCount + absentCount;
                     const percentage = total ? ((presentCount / total) * 100).toFixed(1) : 0;
-                    
+
                     return (
-                      <tr key={day} className="hover:bg-gray-50">
-                        <td className="py-2 px-4 border-b">{formatDisplayDate(new Date(day))}</td>
-                        <td className="py-2 px-4 border-b text-green-600">{presentCount}</td>
-                        <td className="py-2 px-4 border-b text-red-600">{absentCount}</td>
-                        <td className="py-2 px-4 border-b">
+                      <tr key={day}>
+                        <td>{formatDisplayDate(new Date(day))}</td>
+                        <td>{presentCount}</td>
+                        <td>{absentCount}</td>
+                        <td>
                           <div className="flex items-center">
                             <div className="w-24 bg-gray-200 rounded-full h-2.5 mr-2">
                               <div 
@@ -166,38 +290,34 @@ const WeeklyReport = () => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Staff Attendance Details</h3>
+          <div>
+            <h3>Staff Attendance Details</h3>
             <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200">
+              <table className="attendance-table">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="py-2 px-4 border-b text-left">Staff ID</th>
-                    <th className="py-2 px-4 border-b text-left">Name</th>
-                    <th className="py-2 px-4 border-b text-left">Department</th>
+                  <tr>
+                    <th>Staff ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
                     {weekDays.slice(0, 5).map((day) => (
-                      <th key={day} className="py-2 px-4 border-b text-center">
-                        {new Date(day).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}
-                      </th>
+                      <th key={day}>{new Date(day).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {Object.entries(report.staffAttendance).map(([staffId, data]) => (
-                    <tr key={staffId} className="hover:bg-gray-50">
-                      <td className="py-2 px-4 border-b">{staffId}</td>
-                      <td className="py-2 px-4 border-b">{data.staff?.name}</td>
-                      <td className="py-2 px-4 border-b capitalize">{data.staff?.department}</td>
+                    <tr key={staffId}>
+                      <td>{staffId}</td>
+                      <td>{data.staff?.name}</td>
+                      <td>{data.staff?.department}</td>
                       {weekDays.slice(0, 5).map((day) => {
                         const status = data.days[day] || 'unmarked';
                         return (
-                          <td key={day} className="py-2 px-4 border-b text-center">
+                          <td key={day} className="text-center">
                             {status !== 'unmarked' ? (
-                              <span className={`px-2 py-1 rounded-full text-xs ${getStatusClass(status)}`}>
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                              </span>
+                              <span className={`status-pill ${status}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
                             ) : (
-                              <span className="text-gray-400">-</span>
+                              <span>-</span>
                             )}
                           </td>
                         );

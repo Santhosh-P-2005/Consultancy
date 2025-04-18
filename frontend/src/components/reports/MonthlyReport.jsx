@@ -54,18 +54,16 @@ const MonthlyReport = () => {
   const years = Array.from({ length: 6 }, (_, i) => getCurrentYear() - i);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Monthly Attendance Report</h2>
+    <div className="container">
+      <h2 className="header">Monthly Attendance Report</h2>
       
-      <form onSubmit={handleSubmit} className="mb-6">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="w-full md:w-1/4">
-            <label htmlFor="month" className="block text-sm font-medium text-gray-700 mb-1">
-              Month
-            </label>
+      <form onSubmit={handleSubmit} className="form">
+        <div className="form-group">
+          <div className="input-group">
+            <label htmlFor="month" className="label">Month</label>
             <select
               id="month"
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              className="select"
               value={month}
               onChange={handleMonthChange}
             >
@@ -83,13 +81,11 @@ const MonthlyReport = () => {
               <option value={12}>December</option>
             </select>
           </div>
-          <div className="w-full md:w-1/4">
-            <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
-              Year
-            </label>
+          <div className="input-group">
+            <label htmlFor="year" className="label">Year</label>
             <select
               id="year"
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              className="select"
               value={year}
               onChange={handleYearChange}
             >
@@ -100,92 +96,70 @@ const MonthlyReport = () => {
               ))}
             </select>
           </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Generate Report
-          </button>
-          <button
-            type="button"
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-            onClick={handleExport}
-          >
-            Export to Excel
-          </button>
+          <button type="submit" className="btn-primary">Generate Report</button>
+          <button type="button" className="btn-secondary" onClick={handleExport}>Export to Excel</button>
         </div>
       </form>
 
-      {loading && <div className="text-center py-4">Loading report...</div>}
+      {loading && <div className="loading">Loading report...</div>}
       
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4">
+        <div className="error">
           {error}
         </div>
       )}
 
       {report && !loading && (
         <div>
-          <div className="bg-gray-100 p-4 rounded-md mb-6">
-            <h3 className="text-lg font-semibold mb-2">
+          <div className="summary">
+            <h3 className="summary-title">
               Monthly Summary for {report.summary.month} {report.summary.year}
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white p-3 rounded shadow-sm">
-                <div className="text-sm text-gray-500">Working Days</div>
-                <div className="text-2xl font-bold">{report.summary.workingDays}</div>
+            <div className="summary-stats">
+              <div className="stat">
+                <div className="stat-label">Working Days</div>
+                <div className="stat-value">{report.summary.workingDays}</div>
               </div>
-              <div className="bg-white p-3 rounded shadow-sm">
-                <div className="text-sm text-gray-500">Total Staff</div>
-                <div className="text-2xl font-bold">{report.summary.totalStaff}</div>
+              <div className="stat">
+                <div className="stat-label">Total Staff</div>
+                <div className="stat-value">{report.summary.totalStaff}</div>
               </div>
-              <div className="bg-white p-3 rounded shadow-sm">
-                <div className="text-sm text-gray-500">Avg. Attendance</div>
-                <div className="text-2xl font-bold">{report.summary.averageAttendance}%</div>
+              <div className="stat">
+                <div className="stat-label">Avg. Attendance</div>
+                <div className="stat-value">{report.summary.averageAttendance}%</div>
               </div>
             </div>
           </div>
 
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Staff Attendance Statistics</h3>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200">
+          <div className="attendance-stats">
+            <h3 className="table-title">Staff Attendance Statistics</h3>
+            <div className="table-responsive">
+              <table className="table">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="py-2 px-4 border-b text-left">Staff ID</th>
-                    <th className="py-2 px-4 border-b text-left">Name</th>
-                    <th className="py-2 px-4 border-b text-left">Department</th>
-                    <th className="py-2 px-4 border-b text-center">Present Days</th>
-                    <th className="py-2 px-4 border-b text-center">Absent Days</th>
-                    <th className="py-2 px-4 border-b text-center">Unmarked</th>
-                    <th className="py-2 px-4 border-b text-center">Attendance %</th>
+                  <tr>
+                    <th>Staff ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Present Days</th>
+                    <th>Absent Days</th>
+                    <th>Unmarked</th>
+                    <th>Attendance %</th>
                   </tr>
                 </thead>
                 <tbody>
                   {report.staffReports.map((staff) => (
-                    <tr key={staff._id} className="hover:bg-gray-50">
-                      <td className="py-2 px-4 border-b">{staff.staffId}</td>
-                      <td className="py-2 px-4 border-b">{staff.name}</td>
-                      <td className="py-2 px-4 border-b capitalize">{staff.department}</td>
-                      <td className="py-2 px-4 border-b text-center text-green-600">
-                        {staff.totalPresent}
-                      </td>
-                      <td className="py-2 px-4 border-b text-center text-red-600">
-                        {staff.totalAbsent}
-                      </td>
-                      <td className="py-2 px-4 border-b text-center text-yellow-600">
-                        {staff.totalUnmarked}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        <div className="flex items-center justify-center">
-                          <div className="w-24 bg-gray-200 rounded-full h-2.5 mr-2">
-                            <div 
-                              className="bg-blue-600 h-2.5 rounded-full" 
-                              style={{ width: `${staff.attendancePercentage}%` }}
-                            ></div>
-                          </div>
-                          <span>{staff.attendancePercentage}%</span>
+                    <tr key={staff._id}>
+                      <td>{staff.staffId}</td>
+                      <td>{staff.name}</td>
+                      <td>{staff.department}</td>
+                      <td className="green">{staff.totalPresent}</td>
+                      <td className="red">{staff.totalAbsent}</td>
+                      <td className="yellow">{staff.totalUnmarked}</td>
+                      <td>
+                        <div className="progress-bar">
+                          <div className="progress" style={{ width: `${staff.attendancePercentage}%` }}></div>
                         </div>
+                        <span>{staff.attendancePercentage}%</span>
                       </td>
                     </tr>
                   ))}
@@ -194,19 +168,192 @@ const MonthlyReport = () => {
             </div>
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Day-wise Attendance Details</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Click on a staff member to view their detailed day-wise attendance for the month.
-            </p>
-            
-            {/* This could be expanded with a detailed calendar view or a collapsible section */}
-            <div className="bg-gray-50 p-4 rounded text-center">
-              <p>Select a staff member from the table above to view their detailed attendance record.</p>
-            </div>
+          <div className="day-wise">
+            <h3 className="table-title">Day-wise Attendance Details</h3>
+            <p>Select a staff member from the table above to view their detailed attendance record.</p>
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .container {
+          background-color: white;
+          padding: 2rem;
+          border-radius: 0.5rem;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+        }
+
+        .form {
+          margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .input-group {
+          flex: 1;
+          min-width: 200px;
+        }
+
+        .label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: medium;
+          margin-bottom: 0.5rem;
+        }
+
+        .select {
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: 0.375rem;
+          border: 1px solid #e2e8f0;
+        }
+
+        .btn-primary {
+          background-color: #3182ce;
+          color: white;
+          padding: 0.75rem 1.5rem;
+          border-radius: 0.375rem;
+          margin-left: 1rem;
+          cursor: pointer;
+        }
+
+        .btn-primary:hover {
+          background-color: #2b6cb0;
+        }
+
+        .btn-secondary {
+          background-color: #48bb78;
+          color: white;
+          padding: 0.75rem 1.5rem;
+          border-radius: 0.375rem;
+          cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+          background-color: #38a169;
+        }
+
+        .loading {
+          text-align: center;
+          padding: 1rem;
+        }
+
+        .error {
+          background-color: #fed7d7;
+          color: #e53e3e;
+          padding: 1rem;
+          border-radius: 0.375rem;
+          margin-bottom: 1rem;
+        }
+
+        .summary {
+          background-color: #f7fafc;
+          padding: 1rem;
+          border-radius: 0.375rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .summary-title {
+          font-size: 1.25rem;
+          font-weight: semibold;
+          margin-bottom: 0.75rem;
+        }
+
+        .summary-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1rem;
+        }
+
+        .stat {
+          background-color: white;
+          padding: 1rem;
+          border-radius: 0.375rem;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+          font-size: 0.875rem;
+          color: #4a5568;
+        }
+
+        .stat-value {
+          font-size: 1.25rem;
+          font-weight: bold;
+          margin-top: 0.5rem;
+        }
+
+        .attendance-stats {
+          margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+          font-size: 1.25rem;
+          font-weight: semibold;
+          margin-bottom: 1rem;
+        }
+
+        .table-responsive {
+          overflow-x: auto;
+        }
+
+        .table {
+          width: 100%;
+          background-color: white;
+          border-collapse: collapse;
+          border: 1px solid #edf2f7;
+        }
+
+        .table th,
+        .table td {
+          padding: 1rem;
+          text-align: left;
+          border-bottom: 1px solid #edf2f7;
+        }
+
+        .green {
+          color: #38a169;
+        }
+
+        .red {
+          color: #e53e3e;
+        }
+
+        .yellow {
+          color: #ecc94b;
+        }
+
+        .progress-bar {
+          background-color: #edf2f7;
+          border-radius: 9999px;
+          height: 0.5rem;
+          margin-right: 0.5rem;
+          width: 100%;
+        }
+
+        .progress {
+          background-color: #3182ce;
+          height: 100%;
+          border-radius: 9999px;
+        }
+
+        .day-wise {
+          background-color: #f7fafc;
+          padding: 1rem;
+          border-radius: 0.375rem;
+          text-align: center;
+        }
+      `}</style>
     </div>
   );
 };

@@ -91,192 +91,253 @@ const AttendanceList = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Attendance Records</h2>
-          <Link 
-            to="/attendance/mark" 
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Mark Attendance
-          </Link>
-        </div>
-        
-        {/* Filters */}
-        <div className="bg-gray-50 p-4 rounded-lg mb-6">
-          <h3 className="text-lg font-semibold mb-3">Filters</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                value={filters.startDate}
-                onChange={handleFilterChange}
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                value={filters.endDate}
-                onChange={handleFilterChange}
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Staff</label>
-              <select
-                name="staffId"
-                value={filters.staffId}
-                onChange={handleFilterChange}
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              >
-                <option value="">All Staff</option>
-                {staff.map(member => (
-                  <option key={member._id} value={member.staffId}>
-                    {member.name} ({member.staffId})
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-              <select
-                name="department"
-                value={filters.department}
-                onChange={handleFilterChange}
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              >
-                <option value="">All Departments</option>
-                {departments.map(dept => (
-                  <option key={dept} value={dept}>
-                    {dept.charAt(0).toUpperCase() + dept.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                name="status"
-                value={filters.status}
-                onChange={handleFilterChange}
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              >
-                <option value="">All Status</option>
-                <option value="present">Present</option>
-                <option value="absent">Absent</option>
-                <option value="leave">Leave</option>
-                <option value="halfday">Half Day</option>
-              </select>
-            </div>
-            
-            <div className="md:col-span-3 flex justify-end">
-              <button
-                onClick={clearFilters}
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Clear Filters
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-        
-        {loading ? (
-          <div className="text-center py-4">Loading attendance records...</div>
-        ) : attendance.length === 0 ? (
-          <div className="text-center py-4">No attendance records found.</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Staff
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Department
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Notes
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {attendance.map((record) => (
-                  <tr key={record._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {record.staff?.name || 'Unknown'}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {record.staffId}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {record.staff?.department || 'Unknown'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {formatDisplayDate(record.date)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(record.status)}`}>
-                        {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
-                        {record.notes || '-'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link 
-                        to={`/attendance/${record._id}`} 
-                        className="text-indigo-600 hover:text-indigo-900 mr-3"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => deleteAttendance(record._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+    <div className="attendance-container">
+      <style>
+        {`
+          .attendance-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+          }
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+          }
+          .header h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+          }
+          .mark-attendance-btn {
+            background-color: #3182ce;
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s ease-in-out;
+          }
+          .mark-attendance-btn:hover {
+            background-color: #2b6cb0;
+          }
+          .filters {
+            background-color: #f7fafc;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+          }
+          .filters h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+          .filters .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          .filters .grid input, .filters .grid select {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid #e2e8f0;
+          }
+          .filters button {
+            background-color: #4a5568;
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+          }
+          .filters button:hover {
+            background-color: #2d3748;
+          }
+          .error-message {
+            background-color: #fed7d7;
+            color: #9b2c2c;
+            border: 1px solid #fc8181;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+          }
+          .loading {
+            text-align: center;
+            padding: 1rem;
+          }
+          .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          .attendance-table th, .attendance-table td {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.875rem;
+            color: #2d3748;
+          }
+          .attendance-table th {
+            background-color: #f7fafc;
+            text-transform: uppercase;
+            font-weight: 600;
+          }
+          .status-badge {
+            display: inline-flex;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-transform: capitalize;
+          }
+          .actions {
+            text-align: right;
+          }
+          .edit-btn, .delete-btn {
+            font-weight: 600;
+            cursor: pointer;
+          }
+          .edit-btn {
+            color: #5a67d8;
+            margin-right: 1rem;
+          }
+          .edit-btn:hover {
+            color: #434190;
+          }
+          .delete-btn {
+            color: #e53e3e;
+          }
+          .delete-btn:hover {
+            color: #c53030;
+          }
+        `}
+      </style>
+
+      <div className="header">
+        <h2>Attendance Records</h2>
+        <Link to="/attendance/mark" className="mark-attendance-btn">
+          Mark Attendance
+        </Link>
       </div>
+
+      {/* Filters */}
+      <div className="filters">
+        <h3>Filters</h3>
+        <div className="grid">
+          {/* Filter Fields */}
+          <div>
+            <label>Start Date</label>
+            <input
+              type="date"
+              name="startDate"
+              value={filters.startDate}
+              onChange={handleFilterChange}
+            />
+          </div>
+          <div>
+            <label>End Date</label>
+            <input
+              type="date"
+              name="endDate"
+              value={filters.endDate}
+              onChange={handleFilterChange}
+            />
+          </div>
+          <div>
+            <label>Staff</label>
+            <select
+              name="staffId"
+              value={filters.staffId}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Staff</option>
+              {staff.map(member => (
+                <option key={member._id} value={member.staffId}>
+                  {member.name} ({member.staffId})
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Department</label>
+            <select
+              name="department"
+              value={filters.department}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Departments</option>
+              {departments.map(dept => (
+                <option key={dept} value={dept}>
+                  {dept.charAt(0).toUpperCase() + dept.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Status</label>
+            <select
+              name="status"
+              value={filters.status}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Status</option>
+              <option value="present">Present</option>
+              <option value="absent">Absent</option>
+              <option value="leave">Leave</option>
+              <option value="halfday">Half Day</option>
+            </select>
+          </div>
+          <div className="filters-action">
+            <button onClick={clearFilters}>Clear Filters</button>
+          </div>
+        </div>
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+
+      {loading ? (
+        <div className="loading">Loading attendance records...</div>
+      ) : attendance.length === 0 ? (
+        <div className="loading">No attendance records found.</div>
+      ) : (
+        <div className="attendance-table-container">
+          <table className="attendance-table">
+            <thead>
+              <tr>
+                <th>Staff</th>
+                <th>Department</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendance.map((record) => (
+                <tr key={record._id}>
+                  <td>{record.staff?.name || 'Unknown'}</td>
+                  <td>{record.staff?.department || 'Unknown'}</td>
+                  <td>{formatDisplayDate(record.date)}</td>
+                  <td>
+                    <span className={`status-badge ${getStatusBadgeClass(record.status)}`}>
+                      {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                    </span>
+                  </td>
+                  <td>{record.notes || '-'}</td>
+                  <td className="actions">
+                    <Link to={`/attendance/${record._id}`} className="edit-btn">
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => deleteAttendance(record._id)}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

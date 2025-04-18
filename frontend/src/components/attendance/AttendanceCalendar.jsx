@@ -17,7 +17,6 @@ const AttendanceCalendar = () => {
       try {
         const staffData = await staffService.getAllStaff({ active: true });
         setStaff(staffData);
-        // Set default staff if available
         if (staffData.length > 0 && !staffId) {
           setStaffId(staffData[0].staffId);
         }
@@ -33,14 +32,12 @@ const AttendanceCalendar = () => {
       if (!staffId) return;
       try {
         setLoading(true);
-        // Calculate start and end date for the month
         const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
         const lastDay = new Date(year, month, 0).getDate();
         const endDate = `${year}-${month.toString().padStart(2, '0')}-${lastDay}`;
 
         const attendance = await attendanceService.getAttendance({ staffId, startDate, endDate });
         
-        // Transform into object with date as key for easy lookup
         const attendanceMap = {};
         attendance.forEach(record => {
           const dateStr = formatDate(record.date);
@@ -88,18 +85,15 @@ const AttendanceCalendar = () => {
     }
   };
 
-  // Generate calendar days for the selected month
   const generateCalendarDays = () => {
     const days = [];
     const daysInMonth = new Date(year, month, 0).getDate();
     const firstDay = new Date(year, month - 1, 1).getDay();
     
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       days.push(null);
     }
     
-    // Add all days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(day);
     }
@@ -107,14 +101,13 @@ const AttendanceCalendar = () => {
     return days;
   };
 
-  // Get status class based on attendance status
   const getStatusClass = (day) => {
     if (!day) return '';
     
     const dateStr = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     const record = attendanceData[dateStr];
     
-    if (!record) return 'bg-gray-100'; // No record
+    if (!record) return 'bg-gray-100';
     
     switch (record.status) {
       case 'present':
@@ -130,14 +123,12 @@ const AttendanceCalendar = () => {
     }
   };
 
-  // Check if a date is a weekend
   const isWeekend = (day) => {
     if (!day) return false;
     const date = new Date(year, month - 1, day);
-    return date.getDay() === 0 || date.getDay() === 6; // 0 is Sunday, 6 is Saturday
+    return date.getDay() === 0 || date.getDay() === 6;
   };
 
-  // Get all months for select dropdown
   const months = [
     { value: 1, label: 'January' },
     { value: 2, label: 'February' },
@@ -153,7 +144,6 @@ const AttendanceCalendar = () => {
     { value: 12, label: 'December' }
   ];
 
-  // Generate years for select dropdown (past 5 years and next 2 years)
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
@@ -167,23 +157,19 @@ const AttendanceCalendar = () => {
   const calendarDays = generateCalendarDays();
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Attendance Calendar</h2>
+    <div className="attendance-calendar">
+      <h2 className="title">Attendance Calendar</h2>
       
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+        <div className="error-message">
           {error}
         </div>
       )}
       
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="w-full md:w-1/3">
-          <label className="block text-gray-700 mb-2">Staff Member</label>
-          <select
-            className="w-full p-2 border rounded"
-            value={staffId}
-            onChange={handleStaffChange}
-          >
+      <div className="filters">
+        <div className="filter">
+          <label>Staff Member</label>
+          <select value={staffId} onChange={handleStaffChange}>
             <option value="">Select Staff</option>
             {staff.map(s => (
               <option key={s._id} value={s.staffId}>
@@ -193,13 +179,9 @@ const AttendanceCalendar = () => {
           </select>
         </div>
         
-        <div className="w-full md:w-1/4">
-          <label className="block text-gray-700 mb-2">Month</label>
-          <select
-            className="w-full p-2 border rounded"
-            value={month}
-            onChange={handleMonthChange}
-          >
+        <div className="filter">
+          <label>Month</label>
+          <select value={month} onChange={handleMonthChange}>
             {months.map(m => (
               <option key={m.value} value={m.value}>
                 {m.label}
@@ -208,13 +190,9 @@ const AttendanceCalendar = () => {
           </select>
         </div>
         
-        <div className="w-full md:w-1/4">
-          <label className="block text-gray-700 mb-2">Year</label>
-          <select
-            className="w-full p-2 border rounded"
-            value={year}
-            onChange={handleYearChange}
-          >
+        <div className="filter">
+          <label>Year</label>
+          <select value={year} onChange={handleYearChange}>
             {years.map(y => (
               <option key={y} value={y}>
                 {y}
@@ -224,64 +202,39 @@ const AttendanceCalendar = () => {
         </div>
       </div>
       
-      <div className="flex justify-between mb-4">
-        <button 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={handlePreviousMonth}
-        >
-          Previous Month
-        </button>
-        <h3 className="text-xl font-semibold">
-          {months.find(m => m.value === month)?.label} {year}
-        </h3>
-        <button 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={handleNextMonth}
-        >
-          Next Month
-        </button>
+      <div className="navigation">
+        <button onClick={handlePreviousMonth}>Previous Month</button>
+        <h3>{months.find(m => m.value === month)?.label} {year}</h3>
+        <button onClick={handleNextMonth}>Next Month</button>
       </div>
       
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-        </div>
+        <div className="loading-spinner"></div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+        <div className="calendar-table">
+          <table>
             <thead>
               <tr>
-                <th className="border p-2 text-center">Sun</th>
-                <th className="border p-2 text-center">Mon</th>
-                <th className="border p-2 text-center">Tue</th>
-                <th className="border p-2 text-center">Wed</th>
-                <th className="border p-2 text-center">Thu</th>
-                <th className="border p-2 text-center">Fri</th>
-                <th className="border p-2 text-center">Sat</th>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
               </tr>
             </thead>
             <tbody>
               {Array(Math.ceil(calendarDays.length / 7)).fill().map((_, weekIndex) => (
-                <tr key={`week-${weekIndex}`}>
+                <tr key={weekIndex}>
                   {calendarDays.slice(weekIndex * 7, weekIndex * 7 + 7).map((day, dayIndex) => (
-                    <td 
-                      key={`day-${weekIndex}-${dayIndex}`}
-                      className={`border p-2 h-24 align-top ${day ? getStatusClass(day) : ''} ${isWeekend(day) ? 'bg-gray-50' : ''}`}
-                    >
+                    <td key={dayIndex} className={`${getStatusClass(day)} ${isWeekend(day) ? 'weekend' : ''}`}>
                       {day && (
                         <>
-                          <div className="font-semibold">{day}</div>
+                          <div className="day-number">{day}</div>
                           {attendanceData[`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`] && (
-                            <div className="mt-1 text-xs">
-                              <div className="font-medium">
-                                Status: {attendanceData[`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`].status.charAt(0).toUpperCase() + 
-                                  attendanceData[`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`].status.slice(1)}
-                              </div>
-                              {attendanceData[`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`].notes && (
-                                <div className="text-gray-600 truncate">
-                                  {attendanceData[`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`].notes}
-                                </div>
-                              )}
+                            <div className="status">
+                              <div>Status: {attendanceData[`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`].status}</div>
                             </div>
                           )}
                         </>
@@ -295,31 +248,137 @@ const AttendanceCalendar = () => {
         </div>
       )}
       
-      <div className="mt-6">
-        <h4 className="font-semibold mb-2">Legend:</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-green-200 mr-2"></div>
-            <span>Present</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-red-200 mr-2"></div>
-            <span>Absent</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-yellow-200 mr-2"></div>
-            <span>Leave</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-orange-200 mr-2"></div>
-            <span>Half Day</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-gray-100 mr-2"></div>
-            <span>No Record</span>
-          </div>
+      <div className="legend">
+        <h4>Legend:</h4>
+        <div className="legend-item">
+          <div className="color-box green"></div>
+          <span>Present</span>
+        </div>
+        <div className="legend-item">
+          <div className="color-box red"></div>
+          <span>Absent</span>
+        </div>
+        <div className="legend-item">
+          <div className="color-box yellow"></div>
+          <span>Leave</span>
+        </div>
+        <div className="legend-item">
+          <div className="color-box orange"></div>
+          <span>Half Day</span>
         </div>
       </div>
+      
+      <style jsx>{`
+        .attendance-calendar {
+          font-family: Arial, sans-serif;
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        
+        .title {
+          text-align: center;
+          font-size: 2em;
+          margin-bottom: 20px;
+        }
+        
+        .filters {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 20px;
+        }
+        
+        .filter {
+          width: 30%;
+        }
+        
+        .filter select {
+          width: 100%;
+          padding: 10px;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+        }
+        
+        .navigation {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        
+        .calendar-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        
+        .calendar-table th,
+        .calendar-table td {
+          width: 14.28%;
+          height: 60px;
+          text-align: center;
+          vertical-align: middle;
+          border: 1px solid #ccc;
+        }
+        
+        .calendar-table td {
+          position: relative;
+        }
+        
+        .day-number {
+          font-size: 1.2em;
+        }
+        
+        .status {
+          font-size: 0.8em;
+        }
+        
+        .loading-spinner {
+          width: 30px;
+          height: 30px;
+          border: 5px solid #ccc;
+          border-top: 5px solid #000;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        .legend {
+          margin-top: 20px;
+        }
+        
+        .legend-item {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+        
+        .color-box {
+          width: 20px;
+          height: 20px;
+          border-radius: 5px;
+          margin-right: 10px;
+        }
+        
+        .green { background-color: #c9f7c9; }
+        .red { background-color: #f7c9c9; }
+        .yellow { background-color: #f7f1c9; }
+        .orange { background-color: #f7e1c9; }
+        
+        .weekend {
+          background-color: #f0f0f0;
+        }
+        
+        .error-message {
+          color: red;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+      `}</style>
     </div>
   );
 };

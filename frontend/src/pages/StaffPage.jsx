@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import StaffList from '../components/staff/StaffList';
+import EditStaff from '../components/staff/EditStaff';
 import StaffForm from '../components/staff/StaffForm';
+import ViewStaff from '../components/staff/ViewStaff';
 import StaffDetails from '../components/staff/StaffDetails';
 import { staffService } from '../services/staffService';
 
@@ -111,10 +113,10 @@ const StaffPage = () => {
     <MainLayout>
       {/* Page Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">
+        <h1 className="page-title">
           {isAddPage ? 'Add New Staff' : isDetailsPage ? 'Staff Details' : 'Staff Management'}
         </h1>
-        <p className="text-gray-600">
+        <p className="page-description">
           {isAddPage ? 'Create a new staff profile' : 
            isDetailsPage ? 'View and update staff information' : 
            'Manage your staff members'}
@@ -123,91 +125,108 @@ const StaffPage = () => {
       
       {/* Error Display */}
       {error && (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+        <div className="alert-box" role="alert">
           <p>{error}</p>
         </div>
       )}
       
       {/* Page Content */}
-      {isListPage && (
-        <>
-          {/* Filter Controls */}
-          <div className="bg-white p-4 rounded-lg shadow mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <input
-                  type="text"
-                  id="search"
-                  name="search"
-                  value={filters.search}
-                  onChange={handleFilterChange}
-                  placeholder="Search by name, ID or department..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              
-              <div className="md:w-1/4">
-                <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                <select
-                  id="department"
-                  name="department"
-                  value={filters.department}
-                  onChange={handleFilterChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Departments</option>
-                  {departments.map((dept, index) => (
-                    <option key={index} value={dept}>
-                      {dept.charAt(0).toUpperCase() + dept.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="md:w-1/4">
-                <label htmlFor="active" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select
-                  id="active"
-                  name="active"
-                  value={filters.active}
-                  onChange={handleFilterChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
-                  <option value="">All</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          <StaffList 
-            staff={allStaff}
+      <Routes>
+        <Route path="/" element={
+          <>
+            {/* Filter Controls */}
+            
+            <StaffList 
+              staff={allStaff}
+              loading={loading}
+              onDelete={handleDeleteStaff}
+            />
+          </>
+        } />
+        
+        <Route path="add" element={
+          <StaffForm 
             loading={loading}
-            onDelete={handleDeleteStaff}
+            departments={departments}
+            onSubmit={handleAddStaff}
+            currentYear={new Date().getFullYear()}
           />
-        </>
-      )}
+        } />
+        
+        <Route path="/edit/:id" element={
+          <EditStaff 
+            staffId={id}
+          />
+        } />
+        <Route path="/:id" element={
+          <ViewStaff 
+            staffId={id}
+          />
+        } />
+      </Routes>
       
-      {isAddPage && (
-        <StaffForm 
-          loading={loading}
-          departments={departments}
-          onSubmit={handleAddStaff}
-          currentYear={new Date().getFullYear()}
-        />
-      )}
-      
-      {isDetailsPage && (
-        <StaffDetails 
-          staffId={id}
-          departments={departments}
-          onUpdate={handleUpdateStaff}
-          onDelete={handleDeleteStaff}
-          loading={loading}
-        />
-      )}
+      {/* CSS Styles */}
+      <style jsx>{`
+        .page-title {
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          color: #4b5563;
+        }
+
+        .page-description {
+          color: #6b7280;
+        }
+
+        .alert-box {
+          background-color: #fee2e2;
+          border-left: 4px solid #ef4444;
+          color: #b91c1c;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .filter-container {
+          background-color: #fff;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          margin-bottom: 1.5rem;
+        }
+
+        .filter-fields {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .filter-item {
+          flex: 1;
+          min-width: 250px;
+        }
+
+        .filter-label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+        }
+
+        .input-field {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          font-size: 0.875rem;
+          transition: all 0.3s;
+        }
+
+        .input-field:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 1px #3b82f6;
+        }
+      `}</style>
     </MainLayout>
   );
 };

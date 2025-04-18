@@ -113,46 +113,42 @@ const BulkAttendance = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Bulk Attendance Entry</h2>
+    <div className="bulk-attendance-container">
+      <h2 className="heading">Bulk Attendance Entry</h2>
       
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="error-message">
           {error}
         </div>
       )}
       
       {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        <div className="success-message">
           Attendance marked successfully for all staff! Redirecting...
         </div>
       )}
       
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="form-section">
           <div>
-            <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
-              Date
-            </label>
+            <label htmlFor="date" className="label">Date</label>
             <input
               type="date"
               id="date"
               value={date}
               onChange={handleDateChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="input-field"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="department" className="block text-gray-700 font-bold mb-2">
-              Department (Optional)
-            </label>
+            <label htmlFor="department" className="label">Department (Optional)</label>
             <select
               id="department"
               value={department}
               onChange={handleDepartmentChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="input-field"
             >
               <option value="">All Departments</option>
               {departments.map(dept => (
@@ -165,32 +161,22 @@ const BulkAttendance = () => {
         </div>
         
         {loading ? (
-          <div className="text-center py-4">Loading staff data...</div>
+          <div className="loading-message">Loading staff data...</div>
         ) : filteredStaff.length === 0 ? (
-          <div className="text-center py-4">No staff found for the selected department.</div>
+          <div className="loading-message">No staff found for the selected department.</div>
         ) : (
-          <div className="overflow-x-auto mb-6">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="table-container">
+            <table className="staff-table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Staff ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Department
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Notes
-                  </th>
+                  <th>Staff ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                  <th>Notes</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {filteredStaff.map((member) => {
                   const attendanceEntry = attendanceData.find(item => item.staffId === member.staffId) || {
                     status: 'present',
@@ -199,22 +185,14 @@ const BulkAttendance = () => {
                   
                   return (
                     <tr key={member._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{member.staffId}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{member.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {member.department.charAt(0).toUpperCase() + member.department.slice(1)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td>{member.staffId}</td>
+                      <td>{member.name}</td>
+                      <td>{member.department.charAt(0).toUpperCase() + member.department.slice(1)}</td>
+                      <td>
                         <select
                           value={attendanceEntry.status}
                           onChange={(e) => handleStatusChange(member.staffId, e.target.value)}
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          className="status-select"
                         >
                           <option value="present">Present</option>
                           <option value="absent">Absent</option>
@@ -222,13 +200,13 @@ const BulkAttendance = () => {
                           <option value="halfday">Half Day</option>
                         </select>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td>
                         <input
                           type="text"
                           value={attendanceEntry.notes}
                           onChange={(e) => handleNotesChange(member.staffId, e.target.value)}
                           placeholder="Optional notes"
-                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          className="notes-input"
                         />
                       </td>
                     </tr>
@@ -239,10 +217,10 @@ const BulkAttendance = () => {
           </div>
         )}
         
-        <div className="flex items-center justify-between">
+        <div className="action-buttons">
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="submit-button"
             disabled={loading || filteredStaff.length === 0}
           >
             {loading ? 'Processing...' : 'Submit Bulk Attendance'}
@@ -250,12 +228,131 @@ const BulkAttendance = () => {
           <button
             type="button"
             onClick={() => navigate('/attendance')}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="cancel-button"
           >
             Cancel
           </button>
         </div>
       </form>
+
+      <style jsx>{`
+        .bulk-attendance-container {
+          background-color: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .heading {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+        }
+
+        .error-message, .success-message {
+          padding: 1rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+        }
+
+        .error-message {
+          background-color: #fce4e4;
+          border: 1px solid #f3b2b2;
+          color: #f44336;
+        }
+
+        .success-message {
+          background-color: #e8f5e9;
+          border: 1px solid #81c784;
+          color: #388e3c;
+        }
+
+        .form-section {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .label {
+          display: block;
+          font-weight: bold;
+          color: #4a4a4a;
+          margin-bottom: 0.5rem;
+        }
+
+        .input-field {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 1rem;
+          color: #4a4a4a;
+        }
+
+        .loading-message {
+          text-align: center;
+          padding: 1rem;
+          font-size: 1rem;
+          color: #4a4a4a;
+        }
+
+        .table-container {
+          overflow-x: auto;
+        }
+
+        .staff-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .staff-table th, .staff-table td {
+          padding: 1rem;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .status-select, .notes-input {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 1rem;
+        }
+
+        .action-buttons {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .submit-button, .cancel-button {
+          padding: 0.75rem 1.5rem;
+          font-size: 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+
+        .submit-button {
+          background-color: #007bff;
+          color: white;
+          border: none;
+        }
+
+        .submit-button:hover {
+          background-color: #0056b3;
+        }
+
+        .cancel-button {
+          background-color: #6c757d;
+          color: white;
+          border: none;
+        }
+
+        .cancel-button:hover {
+          background-color: #5a6268;
+        }
+      `}</style>
     </div>
   );
 };

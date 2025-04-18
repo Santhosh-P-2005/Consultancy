@@ -62,28 +62,142 @@ const CustomReport = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-semibold mb-6">Custom Date Range Report</h2>
+      <style>
+        {`
+          .container {
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 24px;
+          }
+          .header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+          }
+          .form-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+          }
+          .form-group label {
+            font-weight: 500;
+            color: #4a5568;
+          }
+          .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+          }
+          .submit-btn {
+            background-color: #3182ce;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          }
+          .submit-btn:hover {
+            background-color: #2b6cb0;
+          }
+          .error {
+            background-color: #fed7d7;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+          }
+          .report-summary {
+            background-color: #f7fafc;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+          }
+          .summary-item {
+            background-color: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          }
+          .summary-item p {
+            font-size: 0.875rem;
+            color: #4a5568;
+          }
+          .summary-item .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+          }
+          .summary-item.present {
+            background-color: #f0fff4;
+            color: #48bb78;
+          }
+          .summary-item.absent {
+            background-color: #fff5f5;
+            color: #f56565;
+          }
+          .summary-item.leave {
+            background-color: #ebf8ff;
+            color: #3182ce;
+          }
+          .summary-item.halfday {
+            background-color: #fefcbf;
+            color: #ecc94b;
+          }
+          .export-btn {
+            background-color: #38a169;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          }
+          .export-btn:hover {
+            background-color: #2f855a;
+          }
+          .table {
+            width: 100%;
+            background-color: white;
+            border-collapse: collapse;
+            margin-top: 24px;
+            border: 1px solid #e2e8f0;
+          }
+          .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+          }
+          .table th {
+            background-color: #2d3748;
+            color: white;
+          }
+          .table tbody tr:hover {
+            background-color: #f7fafc;
+          }
+        `}
+      </style>
+
+      <h2 className="header">Custom Date Range Report</h2>
       
-      <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <form onSubmit={handleSubmit} className="form-group">
         <div>
-          <label className="block text-gray-700 mb-1">Start Date</label>
+          <label className="block">Start Date</label>
           <input 
             type="date" 
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full p-2 border rounded"
             required
           />
         </div>
         
         <div>
-          <label className="block text-gray-700 mb-1">End Date</label>
+          <label className="block">End Date</label>
           <input 
             type="date" 
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             min={startDate}
-            className="w-full p-2 border rounded"
             required
           />
         </div>
@@ -91,7 +205,7 @@ const CustomReport = () => {
         <div className="flex items-end">
           <button 
             type="submit" 
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="submit-btn"
             disabled={loading}
           >
             {loading ? 'Loading...' : 'Generate Report'}
@@ -100,35 +214,35 @@ const CustomReport = () => {
       </form>
       
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+        <div className="error">
           {error}
         </div>
       )}
       
       {reportData && reportData.length > 0 && (
         <>
-          <div className="bg-gray-100 p-4 rounded-lg mb-6">
+          <div className="report-summary">
             <h3 className="text-lg font-semibold mb-2">Report Summary</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="bg-white p-3 rounded shadow">
-                <p className="text-gray-600 text-sm">Total Records</p>
-                <p className="text-2xl font-bold">{summary.total}</p>
+              <div className={`summary-item ${summary.present > 0 ? 'present' : ''}`}>
+                <p>Total Records</p>
+                <p className="value">{summary.total}</p>
               </div>
-              <div className="bg-green-50 p-3 rounded shadow">
-                <p className="text-gray-600 text-sm">Present</p>
-                <p className="text-2xl font-bold text-green-600">{summary.present}</p>
+              <div className={`summary-item ${summary.present > 0 ? 'present' : ''}`}>
+                <p>Present</p>
+                <p className="value">{summary.present}</p>
               </div>
-              <div className="bg-red-50 p-3 rounded shadow">
-                <p className="text-gray-600 text-sm">Absent</p>
-                <p className="text-2xl font-bold text-red-600">{summary.absent}</p>
+              <div className={`summary-item ${summary.absent > 0 ? 'absent' : ''}`}>
+                <p>Absent</p>
+                <p className="value">{summary.absent}</p>
               </div>
-              <div className="bg-yellow-50 p-3 rounded shadow">
-                <p className="text-gray-600 text-sm">Half Day</p>
-                <p className="text-2xl font-bold text-yellow-600">{summary.halfday}</p>
+              <div className={`summary-item ${summary.halfday > 0 ? 'halfday' : ''}`}>
+                <p>Half Day</p>
+                <p className="value">{summary.halfday}</p>
               </div>
-              <div className="bg-blue-50 p-3 rounded shadow">
-                <p className="text-gray-600 text-sm">Attendance Rate</p>
-                <p className="text-2xl font-bold text-blue-600">{summary.attendanceRate}%</p>
+              <div className="summary-item">
+                <p>Attendance Rate</p>
+                <p className="value">{summary.attendanceRate}%</p>
               </div>
             </div>
           </div>
@@ -136,35 +250,32 @@ const CustomReport = () => {
           <div className="flex justify-end mb-4">
             <button 
               onClick={handleExport}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
+              className="export-btn"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
               Export to Excel
             </button>
           </div>
           
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border">
-              <thead className="bg-gray-800 text-white">
+            <table className="table">
+              <thead>
                 <tr>
-                  <th className="py-3 px-4 text-left">Staff ID</th>
-                  <th className="py-3 px-4 text-left">Name</th>
-                  <th className="py-3 px-4 text-left">Department</th>
-                  <th className="py-3 px-4 text-left">Date</th>
-                  <th className="py-3 px-4 text-left">Status</th>
-                  <th className="py-3 px-4 text-left">Notes</th>
+                  <th>Staff ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody>
                 {reportData.map((record) => (
-                  <tr key={record._id} className="hover:bg-gray-50">
-                    <td className="py-3 px-4">{record.staffId}</td>
-                    <td className="py-3 px-4">{record.staff?.name}</td>
-                    <td className="py-3 px-4">{record.staff?.department}</td>
-                    <td className="py-3 px-4">{formatDisplayDate(record.date)}</td>
-                    <td className="py-3 px-4">
+                  <tr key={record._id}>
+                    <td>{record.staffId}</td>
+                    <td>{record.staff?.name}</td>
+                    <td>{record.staff?.department}</td>
+                    <td>{formatDisplayDate(record.date)}</td>
+                    <td>
                       <span className={`px-2 py-1 rounded text-xs font-medium
                         ${record.status === 'present' ? 'bg-green-100 text-green-800' : ''}
                         ${record.status === 'absent' ? 'bg-red-100 text-red-800' : ''}
@@ -174,7 +285,7 @@ const CustomReport = () => {
                         {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
                       </span>
                     </td>
-                    <td className="py-3 px-4">{record.notes}</td>
+                    <td>{record.notes}</td>
                   </tr>
                 ))}
               </tbody>

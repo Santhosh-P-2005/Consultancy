@@ -62,120 +62,236 @@ const StaffList = () => {
   };
   
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Staff List</h1>
-        <Link to="/staff/add" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    <div className="staff-list-container">
+      <style>
+        {`
+          .staff-list-container {
+            background-color: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+          }
+
+          .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+          }
+
+          .add-button {
+            background-color: #3182ce;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+          }
+
+          .add-button:hover {
+            background-color: #2b6cb0;
+          }
+
+          .filter-form {
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+          }
+
+          .filter-form input,
+          .filter-form select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+          }
+
+          .filter-form button {
+            background-color: #edf2f7;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+          }
+
+          .filter-form button:hover {
+            background-color: #e2e8f0;
+          }
+
+          .table-container {
+            overflow-x: auto;
+          }
+
+          .table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+
+          .table th,
+          .table td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+          }
+
+          .table th {
+            background-color: #f7fafc;
+          }
+
+          .table tr:hover {
+            background-color: #f7fafc;
+          }
+
+          .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+          }
+
+          .status.active {
+            background-color: #c6f6d5;
+            color: #2f855a;
+          }
+
+          .status.inactive {
+            background-color: #fed7d7;
+            color: #e53e3e;
+          }
+
+          .action-buttons a,
+          .action-buttons button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+          }
+
+          .action-buttons a:hover,
+          .action-buttons button:hover {
+            background-color: #edf2f7;
+          }
+
+          .view-button {
+            background-color: #bee3f8;
+            color: #3182ce;
+          }
+
+          .edit-button {
+            background-color: #faf089;
+            color: #d69e2e;
+          }
+
+          .delete-button {
+            background-color: #fed7d7;
+            color: #e53e3e;
+          }
+        `}
+      </style>
+
+      <div className="header">
+        <h1>Staff List</h1>
+        <Link to="/staff/add" className="add-button">
           Add New Staff
         </Link>
       </div>
       
-      <div className="mb-6">
+      <div className="filter-form">
         <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              name="search"
-              placeholder="Search by name, ID or department..."
-              className="w-full p-2 border rounded"
-              value={filters.search}
-              onChange={handleFilterChange}
-            />
-          </div>
-          
-          <div className="w-48">
-            <select
-              name="department"
-              className="w-full p-2 border rounded"
-              value={filters.department}
-              onChange={handleFilterChange}
-            >
-              <option value="">All Departments</option>
-              {departments.map(dept => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="w-48">
-            <select
-              name="active"
-              className="w-full p-2 border rounded"
-              value={filters.active}
-              onChange={handleFilterChange}
-            >
-              <option value="true">Active Staff</option>
-              <option value="false">Inactive Staff</option>
-              <option value="">All Staff</option>
-            </select>
-          </div>
-          
-          <button type="submit" className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search by name, ID or department..."
+            value={filters.search}
+            onChange={handleFilterChange}
+          />
+          <select
+            name="department"
+            value={filters.department}
+            onChange={handleFilterChange}
+          >
+            <option value="">All Departments</option>
+            {departments.map(dept => (
+              <option key={dept} value={dept}>{dept}</option>
+            ))}
+          </select>
+          <select
+            name="active"
+            value={filters.active}
+            onChange={handleFilterChange}
+          >
+            <option value="true">Active Staff</option>
+            <option value="false">Inactive Staff</option>
+            <option value="">All Staff</option>
+          </select>
+          <button type="submit">
             Filter
           </button>
         </form>
       </div>
-      
+
       {loading ? (
         <div className="text-center py-4">Loading...</div>
       ) : error ? (
         <div className="text-red-600 py-4">{error}</div>
       ) : (
-        <>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="text-left p-3 border">Staff ID</th>
-                  <th className="text-left p-3 border">Name</th>
-                  <th className="text-left p-3 border">Department</th>
-                  <th className="text-left p-3 border">Designation</th>
-                  <th className="text-left p-3 border">Cabin</th>
-                  <th className="text-left p-3 border">Status</th>
-                  <th className="text-left p-3 border">Actions</th>
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Staff ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Cabin</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {staff.map(member => (
+                <tr key={member._id}>
+                  <td>{member.staffId}</td>
+                  <td>{member.name}</td>
+                  <td>{member.department}</td>
+                  <td>{member.designation || '-'}</td>
+                  <td>{member.cabinNo || '-'}</td>
+                  <td>
+                    <span className={`status ${member.active ? 'active' : 'inactive'}`}>
+                      {member.active ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td className="action-buttons">
+                    <Link to={`/staff/${member._id}`} className="view-button">
+                      View
+                    </Link>
+                    <Link to={`/staff/edit/${member._id}`} className="edit-button">
+                      Edit
+                    </Link>
+                    <button 
+                      onClick={() => handleDelete(member._id)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {staff.map(member => (
-                  <tr key={member._id} className="hover:bg-gray-50">
-                    <td className="p-3 border">{member.staffId}</td>
-                    <td className="p-3 border">{member.name}</td>
-                    <td className="p-3 border capitalize">{member.department}</td>
-                    <td className="p-3 border">{member.designation || '-'}</td>
-                    <td className="p-3 border">{member.cabinNo || '-'}</td>
-                    <td className="p-3 border">
-                      <span className={`px-2 py-1 rounded text-xs ${member.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {member.active ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="p-3 border">
-                      <div className="flex gap-2">
-                        <Link to={`/staff/${member._id}`} className="bg-blue-100 text-blue-600 px-2 py-1 rounded hover:bg-blue-200">
-                          View
-                        </Link>
-                        <Link to={`/staff/edit/${member._id}`} className="bg-yellow-100 text-yellow-600 px-2 py-1 rounded hover:bg-yellow-200">
-                          Edit
-                        </Link>
-                        <button 
-                          onClick={() => handleDelete(member._id)}
-                          className="bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                
-                {staff.length === 0 && (
-                  <tr>
-                    <td colSpan="7" className="p-4 text-center">No staff members found</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </>
+              ))}
+              
+              {staff.length === 0 && (
+                <tr>
+                  <td colSpan="7" className="text-center py-4">No staff members found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

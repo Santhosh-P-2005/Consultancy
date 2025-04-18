@@ -71,24 +71,24 @@ const AttendanceForm = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Mark Attendance</h2>
+    <div className="attendance-form">
+      <h2 className="title">Mark Attendance</h2>
       
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="error-message">
           {error}
         </div>
       )}
       
       {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        <div className="success-message">
           Attendance marked successfully! Redirecting...
         </div>
       )}
       
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="staffId" className="block text-gray-700 font-bold mb-2">
+        <div className="form-group">
+          <label htmlFor="staffId" className="label">
             Staff Member
           </label>
           <select
@@ -96,7 +96,7 @@ const AttendanceForm = () => {
             name="staffId"
             value={formData.staffId}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="input"
             required
           >
             <option value="">Select Staff Member</option>
@@ -108,8 +108,8 @@ const AttendanceForm = () => {
           </select>
         </div>
         
-        <div className="mb-4">
-          <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
+        <div className="form-group">
+          <label htmlFor="date" className="label">
             Date
           </label>
           <input
@@ -118,13 +118,13 @@ const AttendanceForm = () => {
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="input"
             required
           />
         </div>
         
-        <div className="mb-4">
-          <label htmlFor="status" className="block text-gray-700 font-bold mb-2">
+        <div className="form-group">
+          <label htmlFor="status" className="label">
             Status
           </label>
           <select
@@ -132,7 +132,7 @@ const AttendanceForm = () => {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="input"
             required
           >
             <option value="present">Present</option>
@@ -142,8 +142,8 @@ const AttendanceForm = () => {
           </select>
         </div>
         
-        <div className="mb-4">
-          <label htmlFor="notes" className="block text-gray-700 font-bold mb-2">
+        <div className="form-group">
+          <label htmlFor="notes" className="label">
             Notes (Optional)
           </label>
           <textarea
@@ -151,15 +151,15 @@ const AttendanceForm = () => {
             name="notes"
             value={formData.notes}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="input"
             rows="3"
           />
         </div>
         
-        <div className="flex items-center justify-between">
+        <div className="form-actions">
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="btn submit"
             disabled={loading}
           >
             {loading ? 'Processing...' : 'Mark Attendance'}
@@ -167,12 +167,100 @@ const AttendanceForm = () => {
           <button
             type="button"
             onClick={() => navigate('/attendance')}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="btn cancel"
           >
             Cancel
           </button>
         </div>
       </form>
+      
+      <style jsx>{`
+        .attendance-form {
+          background-color: white;
+          padding: 24px;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          max-width: 600px;
+          margin: 0 auto;
+        }
+
+        .title {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+
+        .form-group {
+          margin-bottom: 16px;
+        }
+
+        .label {
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 8px;
+          display: block;
+        }
+
+        .input {
+          width: 100%;
+          padding: 10px;
+          border-radius: 4px;
+          border: 1px solid #ccc;
+          font-size: 14px;
+          box-sizing: border-box;
+        }
+
+        .form-actions {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .btn {
+          padding: 10px 16px;
+          font-size: 14px;
+          font-weight: bold;
+          border-radius: 4px;
+          cursor: pointer;
+          border: none;
+        }
+
+        .submit {
+          background-color: #3b82f6;
+          color: white;
+        }
+
+        .submit:hover {
+          background-color: #2563eb;
+        }
+
+        .cancel {
+          background-color: #6b7280;
+          color: white;
+        }
+
+        .cancel:hover {
+          background-color: #4b5563;
+        }
+
+        .error-message {
+          background-color: #f87171;
+          color: white;
+          padding: 12px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+
+        .success-message {
+          background-color: #34d399;
+          color: white;
+          padding: 12px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+      `}</style>
     </div>
   );
 };
