@@ -228,7 +228,7 @@ const StaffList = () => {
           >
             <option value="true">Active Staff</option>
             <option value="false">Inactive Staff</option>
-            <option value="">All Staff</option>
+            {/* <option value="">All Staff</option> */}
           </select>
           <button type="submit">
             Filter

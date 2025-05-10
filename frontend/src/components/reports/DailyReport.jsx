@@ -39,7 +39,7 @@ const DailyReport = () => {
 
   const handleExport = async () => {
     try {
-      await attendanceService.exportReport('daily', { date: reportDate });
+      await attendanceService.exportReport('daily', { startDate: reportDate });
     } catch (err) {
       console.error('Error exporting report:', err);
       setError('Failed to export report. Please try again.');

@@ -42,7 +42,7 @@ const WeeklyReport = () => {
 
   const handleExport = async () => {
     try {
-      await attendanceService.exportReport('weekly', { date: reportDate });
+      await attendanceService.exportReport('weekly', { startDate: reportDate });
     } catch (err) {
       console.error('Error exporting report:', err);
       setError('Failed to export report. Please try again.');
@@ -100,20 +100,20 @@ const WeeklyReport = () => {
             cursor: pointer;
           }
           .weekly-report .btn-submit {
-            background-color: #3b82f6;
+            background-color: #2563eb;
             color: white;
             border: none;
           }
           .weekly-report .btn-submit:hover {
-            background-color: #2563eb;
+            background-color: #1d4ed8;
           }
           .weekly-report .btn-export {
-            background-color: #10b981;
+            background-color: #16a34a;
             color: white;
             border: none;
           }
           .weekly-report .btn-export:hover {
-            background-color: #047857;
+            background-color: #15803d;
           }
           .weekly-report .loading {
             text-align: center;

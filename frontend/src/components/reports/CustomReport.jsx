@@ -92,7 +92,7 @@ const CustomReport = () => {
             border-radius: 4px;
           }
           .submit-btn {
-            background-color: #3182ce;
+            background-color: #2563eb;
             color: white;
             padding: 8px 16px;
             border-radius: 4px;
@@ -100,7 +100,7 @@ const CustomReport = () => {
             transition: background-color 0.3s;
           }
           .submit-btn:hover {
-            background-color: #2b6cb0;
+            background-color: #1d4ed8;
           }
           .error {
             background-color: #fed7d7;
@@ -146,7 +146,7 @@ const CustomReport = () => {
             color: #ecc94b;
           }
           .export-btn {
-            background-color: #38a169;
+            background-color: #16a34a;
             color: white;
             padding: 8px 16px;
             border-radius: 4px;
@@ -154,7 +154,7 @@ const CustomReport = () => {
             transition: background-color 0.3s;
           }
           .export-btn:hover {
-            background-color: #2f855a;
+            background-color: #15803d;
           }
           .table {
             width: 100%;

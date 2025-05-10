@@ -219,28 +219,30 @@ const MonthlyReport = () => {
         }
 
         .btn-primary {
-          background-color: #3182ce;
+          background-color: #2563eb;
           color: white;
-          padding: 0.75rem 1.5rem;
+          padding: 0.5rem 1rem;
           border-radius: 0.375rem;
           margin-left: 1rem;
           cursor: pointer;
+          margin-top: 30px;
         }
 
         .btn-primary:hover {
-          background-color: #2b6cb0;
+          background-color: #1d4ed8;
         }
 
         .btn-secondary {
-          background-color: #48bb78;
+          background-color: #16a34a;
           color: white;
-          padding: 0.75rem 1.5rem;
+          padding: 0.5rem 1rem;
           border-radius: 0.375rem;
           cursor: pointer;
+          margin-top: 30px;
         }
 
         .btn-secondary:hover {
-          background-color: #38a169;
+          background-color: #15803d;
         }
 
         .loading {
