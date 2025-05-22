@@ -1,7 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext'; // adjust path as needed
 
 const Header = () => {
+  const { setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null); // Clear context user
+    navigate('/login'); // Redirect to login
+  };
+
   return (
     <header className="bg-blue-700 text-white shadow-md fixed top-0 left-0 w-full z-10">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
@@ -22,7 +33,10 @@ const Header = () => {
           <Link to="/reports" className="text-white hover:text-gray-200 transition-colors">
             Reports
           </Link>
-          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors">
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
+          >
             Logout
           </button>
         </nav>

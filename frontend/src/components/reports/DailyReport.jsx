@@ -215,6 +215,13 @@ const DailyReport = () => {
           border-radius: 0.375rem;
           color: white;
         }
+        .edit-btn
+        {
+          color: #eab308;
+          background-color:rgba(241, 244, 80, 0.71);
+          padding :5px;
+          border-radius: 0.375rem;
+        }
         .btn-blue {
           background-color: #2563eb;
         }

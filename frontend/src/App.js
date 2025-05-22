@@ -8,28 +8,59 @@ import StaffPage from './pages/StaffPage';
 import AttendancePage from './pages/AttendancePage';
 import ReportsPage from './pages/ReportsPage';
 
-// Auth-related components (optional for future use)
-// import Login from './components/auth/Login';
-// import PrivateRoute from './components/auth/PrivateRoute';
+// Auth Components
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import PrivateRoute from './components/auth/PrivateRoute';
 
 const App = () => {
   return (
-
     <AuthProvider>
       <Router>
         <Routes>
           {/* Public Routes */}
-          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes (you can wrap with PrivateRoute if needed later) */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/staff/*" element={<StaffPage />} />
-          <Route path="/attendance/*" element={<AttendancePage />} />
-          <Route path="/reports/*" element={<ReportsPage />} />
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/staff/*"
+            element={
+              <PrivateRoute>
+                <StaffPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/attendance/*"
+            element={
+              <PrivateRoute>
+                <AttendancePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reports/*"
+            element={
+              <PrivateRoute>
+                <ReportsPage />
+              </PrivateRoute>
+            }
+          />
 
-          {/* Redirect root and unmatched routes to dashboard */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          {/* Redirect root to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
+          {/* Catch-all unmatched routes */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
