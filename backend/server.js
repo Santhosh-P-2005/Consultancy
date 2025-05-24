@@ -13,9 +13,9 @@ connectDB();
 
 const app = express();
 
-// ✅ Enable CORS before any routes
+// ✅ Updated CORS configuration to support both localhost and Netlify
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://staffattendance.netlify.app'],
   credentials: true
 }));
 
@@ -32,7 +32,7 @@ const authRoutes = require('./routes/authRoutes');
 const staffRoutes = require('./routes/staffRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 
-// ✅ Mount routes AFTER middleware like CORS
+// ✅ Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/attendance', attendanceRoutes);
