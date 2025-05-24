@@ -33,7 +33,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+      const res = await axios.post('https://consultancy-n8hx.onrender.com/api/auth/login', formData);
       const { token, _id, name, email } = res.data;
       const user = { _id, name, email };
 
